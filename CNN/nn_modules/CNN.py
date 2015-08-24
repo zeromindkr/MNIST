@@ -28,6 +28,7 @@ class CNN(object):
         layer_input = input
         layer_shape = image_size;
         params = []
+        layers = []
         for kern0, kern1, pool_size, filter_size in zip([1] + nkerns[:-1], nkerns, pool_sizes, filter_sizes):
             
             filter_shape=(kern1, kern0, filter_size[0], filter_size[1])
@@ -53,10 +54,14 @@ class CNN(object):
                 shape=poolLayer.shape,
                 filter_shape=filter_shape,
             )
+            
+            layers.append((convLayer, poolLayer, activateLayer))
 
             layer_input = activateLayer.output
             layer_shape = activateLayer.shape
             params += convLayer.params + poolLayer.params + activateLayer.params
+
+        self.layers = layers
 
         layer_hidden = HiddenLayer(
             rng=rng,
